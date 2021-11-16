@@ -51,7 +51,7 @@ int *fn_create(size_t size) {
  * Location display is required because array may contain holes
  **/
 void fn_display(size_t arrsize, int arr[arrsize]) {
-  for (size_t i=0; i<arrsize; i++) {
+  for (size_t i = 0; i < arrsize; i++) {
     if (arr[i] != INT_MIN) {
       printf("Element location=%zu, Element value %d\n", i, arr[i]);
     }
@@ -113,7 +113,7 @@ void fn_exit(int *arr) {
   }
 }
 int main() {
-  size_t  arrsize=0; // Array size
+  size_t  arrsize = 0; // Array size
   int*  array = NULL; // actual array element are stored here
   size_t choice;
 
