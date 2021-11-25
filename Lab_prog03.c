@@ -1,7 +1,9 @@
 #include<stdlib.h>
 #include<stdio.h> 
 #include<string.h>
+
 #define max_size 5 
+
 int stack[max_size],top = -1; 
 void push(); 
 void pop(); 
