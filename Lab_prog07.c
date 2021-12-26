@@ -122,30 +122,30 @@ void main() {
     scanf("%d", &ch); 
     switch (ch) { 
       case 1: 
-      printf("\n Enter no of students : "); 
-      scanf("%d", &n); 
-      for(i=0;i<n;i++) 
-      insert_atfirst(); 
-      break; 
+        printf("\n Enter no of students : "); 
+        scanf("%d", &n); 
+        for(i=0;i<n;i++) 
+        insert_atfirst(); 
+        break; 
       case 2: 
-      display(); 
-      break; 
+        display(); 
+        break; 
       case 3: 
-      insert_atlast(); 
-      break; 
+        insert_atlast(); 
+        break; 
       case 4: 
-      deleteend(); 
-      break; 
+        deleteend(); 
+        break; 
       case 5: 
-      insert_atfirst(); 
-      break; 
+        insert_atfirst(); 
+        break; 
       case 6: 
-      deletefront(); 
-      break; 
+        deletefront(); 
+        break; 
       case 7: 
-      exit(0); 
+        exit(0); 
       default: 
-      printf("wrong choice\n");
+        printf("wrong choice\n");
     } 
   } 
 } 
