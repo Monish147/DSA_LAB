@@ -17,18 +17,18 @@ void main() {
     scanf("%d",&ch); 
     switch(ch) { 
       case 1: 
-      insert(); 
-      break; 
+        insert(); 
+        break; 
       case 2: 
-      delet(); 
-      break; 
+        delet(); 
+        break; 
       case 3: 
-      display(); 
-      break; 
+        display(); 
+        break; 
       case 4: 
-      exit(1); 
+        exit(1); 
       default: 
-      printf("Invalid option\n");
+        printf("Invalid option\n");
     } 
   }
 }
