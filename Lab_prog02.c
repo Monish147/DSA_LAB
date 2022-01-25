@@ -36,7 +36,7 @@ void findpat(char *str, char *pat, char *rep){
     }
     else{
         res[j] = '\0';
-        printf("\nThe resultant string is:%s\n" ,res);
+        printf("\nThe resultant string is: %s\n" , res);
     }
 }
 
