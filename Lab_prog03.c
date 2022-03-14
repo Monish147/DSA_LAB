@@ -89,26 +89,14 @@ void display(stack_t* s) {
   printf("\n");
 }
 //-----------------------------------------------------------------
-/*bool palindrome_check(stack_t* s1 , char* arr , size_t mid) {
-  while(s1->top>=0) {
-    if(pop(s1)!=arr[mid]) {
-      return 0;
-    }
-    else {
-      mid++;
-    }
-  }
-  return 1;
-}*/
-//-----------------------------------------------------------------
-int pali(char* string) {
+int palindrome_check(char* string) {
   stack_t* pal = NULL;
-  size_t length=0, i=0;
+  size_t length, i=0;
+  //length = strlen(string);
   while(string[i]!='\0'){
     i++;
     length++;
   }
-  printf("%lu", length);
   size_t mid = length/2;
   bool result;
   pal = create(mid);
@@ -192,7 +180,7 @@ int main() {
         case ch_palindrome:
           printf("Enter the string: ");
           scanf("%s", string);
-          result = pali(string);
+          result = palindrome_check(string);
           if(result == 1) {
             printf("The entered string is palindrome\n");
           }
