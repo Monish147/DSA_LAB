@@ -45,7 +45,7 @@ menu_t menu_options() {
 }
 //-----------------------------------------------------------------
 bool  isfull(stack_t* s){
-  if (s->top == s->capacity) {
+  if (s->top == s->capacity-1) {
     return true;
   }
   else {
@@ -79,12 +79,12 @@ int  pop(stack_t* s) {
 //-----------------------------------------------------------------
 void display(stack_t* s) {
   if(isempty(s)) {
-    printf("Stack not created\n");
+    printf("No Elementsin stack\n");
     return;
   }
   printf("Elements in stack are: ");
   for(size_t i=0; i<=s->top; i++) {
-    printf("%d ", s->elem[i]);
+    printf(" %d ", s->elem[i]);
   }
   printf("\n");
 }
@@ -153,12 +153,11 @@ int main() {
             continue;
           }
           else{
-            if(push(stack, value)) {
-              printf("\nEnter the element to be pushed to stack: ");
-              scanf("%u", &value);
-              printf("Element %u has been pushed to the stack\n", value);
-              break;
-            }
+            printf("\nEnter the element to be pushed to stack: ");
+            scanf("%u", &value);
+            push(stack, value);
+            printf("Element %u has been pushed to the stack\n", value);
+            break;
           }
 
         case ch_pop:
