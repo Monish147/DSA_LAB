@@ -89,7 +89,7 @@ void display(stack_t* s) {
   printf("\n");
 }
 //-----------------------------------------------------------------
-bool palindrome_check(stack_t* s1 , char* arr , size_t mid) {
+/*bool palindrome_check(stack_t* s1 , char* arr , size_t mid) {
   while(s1->top>=0) {
     if(pop(s1)!=arr[mid]) {
       return 0;
@@ -99,7 +99,7 @@ bool palindrome_check(stack_t* s1 , char* arr , size_t mid) {
     }
   }
   return 1;
-}
+}*/
 //-----------------------------------------------------------------
 int pali(char* string) {
   stack_t* pal = NULL;
@@ -117,15 +117,20 @@ int pali(char* string) {
     push(pal, string[i]);
   }
   
-  if(length%2 == 0) {
-    result = palindrome_check(pal, string, mid);
-  }
-  else {
+  if(length%2 != 0) {
     mid++;
-    result = palindrome_check(pal, string, mid);
+  }
+  while(pal->top>=0) {
+    if(pop(pal)!=string[mid]) {
+      free(pal);
+      return 0;
+    }
+    else {
+      mid++;
+    }
   }
   free(pal);
-  return result;
+  return 1;
 }
 //-----------------------------------------------------------------
 void fn_exit(stack_t* s) {
