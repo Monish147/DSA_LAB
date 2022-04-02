@@ -1,87 +1,151 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* define hash data node
- * containing key as 4 digits value,
- * data as anything e.g. name
- */
+// create a direted graph (directed) of N cities and
+// perform both BFS and DFS traversal
+// it is a directed graph
+// first create a graph using adjacency matrix
+// Optionally create the graph as adjacency list as well
+// input to the program is as below
+// line 1: <n> <0|1> <start
+// where  n is number of vertices, 0-undirected, 1-directed
+// and <start> is the vertex to start traversal from
+// line 2 to n+1: <city number>: list of cities SPACE Separated
+/* example input
+4 0 1
+1: 2 4
+2: 3 4
+3:
+4: 1 2 3
+*/
+#define BUF_SIZE  1000 // maxbuffer size
+#define UNDIRECTED  0
+#define DIRECTED 1
+//-------------------
+// BFS traversal
+// graph is nxn adrray
+void bfs(unsigned int n
+      , unsigned int adjm[n+1][n+1]
+      , unsigned int visited[n+1]
+      , unsigned int start)  {
+  //maintain a Queue of nodes to be visited;
+  unsigned int node; // current nsode under traveral
+  unsigned int front=0, rear=0; // 0 implies empty queue
+  unsigned int queue[n+1]; // queue should be large enough
 
-#define SIZE_NAME 100
-#define SIZE_HASH 100
-typedef struct node {
-  int key;
-  char name[SIZE_NAME];
-} node_t;
-
-node_t hash[SIZE_HASH] = {{0,""}};
-
-int hashfn(int key) {
-  return (key%SIZE_HASH);
-}
-//-------------------------------------------------------
-// check the next available slot.
-// If none available, return -1
-int linear_probe(int curr) {
-  int temp = curr;
-  // check for next slot to be free
-  // ensure to roll over
-  temp = (temp + 1) % SIZE_HASH;
-  while(temp != curr) {
-    if(hash[temp].key == 0) {
-      return temp;
-    }
-    temp++;
-  }
- //no empty slot is found
- return -1;
-}
-//-------------------------------------------------------
-int main(int argc, char* argv[]){
-  FILE *fp;
-  node_t data;
-  int hash_val;
-
-  if (argc < 2) {
-    printf("Usage: %s <filename>", argv[1]);
-    exit(1);
-  }
-
-  // read data and insert into hash
-  if ((fp = fopen(argv[1], "r")) == NULL){
-    printf("Error in opening file %s\n", argv[1]);
-    exit(1);
-  }
-  while (fscanf(fp, "%d %s", &data.key, data.name) != EOF) {
-    //validate data key, should be 4 digits only
-    if (data.key < 1000 || data.key > 9999) {
-    // invalid record
-      printf("Key %d is not 4 digits\n", data.key);
-      continue;
-    }
-    hash_val = hashfn(data.key);
-    // check hash is empty, if so enter values
-    if (hash[hash_val].key == 0){
-      hash[hash_val].key = data.key;
-      strncpy(hash[hash_val].name, data.name, SIZE_NAME);
-      continue;
-    }
-    // hash is not empty.
-    // Perform linear probe to find empty slot
-    hash_val = linear_probe(hash_val);
-    if (hash_val == -1) {// no empty slots
-      printf("Hash full. Can't enter key %d\n", data.key);
-      exit(1);
-    }
-    // insert data into hash
-    hash[hash_val].key = data.key;
-    strncpy(hash[hash_val].name, data.name, SIZE_NAME);
+  queue[++rear] = start; //add start node to queue
+  visited[start] = 1; // mark start node visited
+  while (rear > front) { // queue is not empty
+    // add unvisited nodes to queues
+    // node from the front of queue
+    node = queue[++front];
+    printf("%d ", node);
+    // check adjacency list of add nodes to queue
+    for (unsigned int i=1; i<=n; i++) {
+      if ((adjm[node][i] == 1) && (visited[i] ==0))  {
+        queue[++rear] = i;
+        visited[i] = 1;
+      }
+    } // end for
   } // end while
-  // print all hash entries
-  for (int i=0; i<SIZE_HASH; i++) {
-    if(hash[i].key != 0){
-      printf("%d %d %s\n", i, hash[i].key, hash[i].name);
+}
+//-------------------
+// DFS traversal.
+// graph is an n*n array given as adj matrix
+// visited is an array indicating if node is visited or not
+void dfs(unsigned int n
+        , unsigned int adjm[n+1][n+1]
+        , unsigned int visited[n+1]
+        , unsigned int start
+        ){
+  visited[start] = 1;
+  printf("%d ", start);
+  for (unsigned int i=1; i<=n; i++) {
+  // traverse the unvisited node in adj list
+    if ((adjm[start][i]==1) && (visited[i] == 0)){
+      dfs(n, adjm, visited, i);
     }
-  }// end for print hash entries
-    return 0;
+  }
+  return;
+}
+//-------------------
+// size of adjm is (n+1)*(n+1)
+void initgraph(unsigned int n
+              , unsigned int adjm[n+1][n+1]
+              , unsigned int dir) {
+  char buf[BUF_SIZE];
+  char* token;
+  unsigned int node; // graph node
+  unsigned int nbr; // adjacency list
+  // for each vertex, gets its connected nodes
+  while(fgets(buf, BUF_SIZE, stdin)) {
+    token = strtok(buf, ": \n");
+    if (token==NULL) {
+      continue; // node not present
+    }
+    node = atoi(token); // get the node number
+    if (node > n) {//invalid node, ignore
+      continue;
+    }
+    // get the next node
+    token = strtok(NULL, " \n");
+    while (token) {// process all the nodes
+      nbr = atoi(token);
+      token = strtok(NULL, " ");
+      if (nbr >n) {
+        continue; // nbr node is invalid
+      }
+      // set the value in adjacency matrix
+      adjm[node][nbr] = 1;
+      if (dir == UNDIRECTED) {
+        adjm[nbr][node] = 1;
+      }
+    }//end while token
+  } // end for
+} // end initgraph
+//-------------------
+int main() {
+  unsigned int n; //nummber of vertices
+  unsigned int dir; // type of graph undirected or directed
+  unsigned int start; // the start vertex for traversal
+
+  scanf("%d %d %d\n", &n, &dir, &start);
+
+  if (start > n) {
+    printf("Start vertex %d is invalid\n", start);
+  }
+
+  // allocate space for adjacency matrix
+  // for ease of use, node numbers are used from 1 to n
+  unsigned int adjm[n+1][n+1];
+  unsigned int visited[n+1];
+  for (size_t i=0; i<=n; i++) {
+    for (size_t j=0; j<=n; j++) {
+      adjm[i][j] = 0; // initiaze graph with no edges
+    }
+  }
+
+  initgraph(n, adjm, dir);
+  for (size_t i=0; i<=n; i++) {
+    visited[i] = 0; // 1 means visited
+  }
+  for (size_t i=1; i<=n; i++) {
+    if (visited[i] == 0) {
+      printf("\nBFS traversal started from %zu\n", i);
+      bfs(n, adjm, visited, i);
+    }
+  }
+  printf("\n");
+  for (size_t i=0; i<=n; i++) {
+    visited[i] = 0; // 1 means visited
+  }
+  for (size_t i=1; i<=n; i++) {
+    if (visited[i] == 0) {
+      printf("\nDFS traversal started from %zu\n", i);
+      dfs(n, adjm, visited, i);
+    }
+  }
+  printf("\n");
 }
