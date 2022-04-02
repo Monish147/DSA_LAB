@@ -1,68 +1,145 @@
-#define SIZE 50 /* Size of Stack */ 
-#include <ctype.h>
-#include <stdio.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
-char s[SIZE]; 
-int top = -1; /* Global declarations */
+typedef struct {
+        size_t size;         //stack
+        int top;
+        char* arr;
+        }stack_t;
 
-push(char elem) /* Function for PUSH operation */
-{ 
- s[++top] = elem; 
-} 
+typedef struct precedence{
+        char ch;
+        int preced;
+        }preced_t;
 
-char pop() /* Function for POP operation */
-{ 
-return (s[top--]); 
-} 
+ preced_t array[] = {
+                      {'^',3} , {'*',2} , {'/',2} , {'%',2} , {'+',1} , {'-',1}
+                    };
 
-int pr(char elem) /* Function for precedence */
-{ 
-    switch (elem) 
-    { 
-        case '#': 
-        return 0; 
-        case '(': 
-        return 1; 
-        case '+': 
-        case '-': 
-        return 2; 
-        case '*': 
-        case '/':
-        case '%': 
-        return 3; 
-        case '^': 
-        return 4; 
-    } 
-} 
+//creating a stack
+  stack_t*  create(size_t size)
+  {
+    stack_t* stack = malloc(sizeof(stack_t));
+    if (stack != NULL)
+    {
+      stack->size = size;
+      stack->arr = calloc(size , sizeof(char));
+      if (stack->arr != NULL)
+      {
+        stack->top = -1; // stack is empty
+      }
+      else
+      {
+        free(stack);
+    stack = NULL;
+      }
+    }  return stack;
+  }
 
-void main() /* Main Program */
-{ 
-    char infx[50], pofx[50], ch, elem; 
-    int i = 0, k = 0; 
-    printf("\n\nEnter the Infix Expression "); 
-    scanf("%s", infx); 
-    push('#');
-    while ((ch = infx[i++]) != '\0') 
-    { 
-        if (ch == '(') 
-        push(ch); 
-        else if (isalnum(ch)) 
-        pofx[k++] = ch; 
-        else if (ch == ')') 
-        { 
-            while (s[top] != '(') 
-            pofx[k++] = pop(); 
-            elem = pop(); /* Remove ( */
-        } 
-        else /* Operator */
-        { 
-        while (pr(s[top]) >= pr(ch)) 
-        pofx[k++] = pop(); 
-        push(ch); 
-        } 
-    } 
-    while (s[top] != '#') /* Pop from stack till empty */ 
-    pofx[k++] = pop(); 
-    pofx[k] = '\0'; /* Make pofx as valid string */
-    printf("\n\nGiven Infix Expn: %s Postfix Expn: %s\n", infx, pofx); 
-} 
+  bool  isfull(stack_t* s)
+  {
+    if (s->top == s->size)
+    {
+       return true;
+    }
+    else
+    {
+       return false;
+    }
+  }
+
+
+  int  isempty(stack_t* s)
+  {
+     if (s->top == -1)
+     {
+        return true;
+     }
+     else
+     {
+        return false;
+     }
+  }
+
+
+
+
+  int  push(stack_t* s, char oprtr)
+  {
+    if (isfull(s))                  // is stack full?
+    {
+       return 0;
+    }
+    s->arr[++s->top]=oprtr;
+    return 1;
+  }
+
+
+  int  pop(stack_t* s)
+  {
+    if (isempty(s))                // is stack empty
+    {
+      return 0;
+    }
+    return (s->arr[s->top--]);
+  }
+
+
+int oprtr_priority(char ch)
+{
+    for(unsigned short int i=0 ; i< 6 ;i++)
+    {
+      if(ch == array[i].ch)
+        return (array[i].preced);
+    }
+    return 0;
+}
+
+
+
+int main()
+{
+  char str[40];
+  char ans[40];
+  unsigned short int i,j;
+  i=j=0;
+
+  printf("please enter an expression:   ");
+  scanf("%s",str);
+
+  stack_t* s1=create(25);
+
+  while(str[i]!='\0')
+  {
+    if(isalnum(str[i]))
+    {
+      ans[j++]=str[i++];
+    }
+    else if(str[i]=='(') {
+      push(s1 , str[i++]);
+    }
+    else if(str[i]==')') {
+      while(s1->arr[s1->top]!='(') {
+        ans[j++]=pop(s1);
+      }
+      pop(s1);
+      i++;
+    }
+    else {
+      while((oprtr_priority(str[i]))<=(oprtr_priority(s1->arr[s1->top]))) {
+        ans[j++]=pop(s1);
+      }
+      push(s1 , str[i++]);
+    }
+  }
+
+  while(s1->top>=0) {
+    ans[j++]=pop(s1);
+  }
+
+  ans[j]='\0';
+  printf(" postfix is : %s\n",ans);
+return 0;
+}
